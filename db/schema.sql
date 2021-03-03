@@ -7,7 +7,7 @@ CREATE TABLE department (
   id INT NOT NULL AUTO_INCREMENT,
   dept_name VARCHAR(30) NOT NULL,
   PRIMARY KEY (id)
-);NULL
+);
 
 CREATE TABLE emp_role (
   id INT NOT NULL AUTO_INCREMENT,
