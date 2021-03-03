@@ -139,6 +139,7 @@ addRole = () => {
   deptHolder = [];
   for (i = 0; i < departments.length; i++) {
     deptHolder.push(Object(departments[i]));
+    console.log(deptHolder);
   };
     inquirer.prompt([{
       name: "input_role",
@@ -152,8 +153,15 @@ addRole = () => {
       name: "input_dept_id",
       type: "list",
       message: "SELECT DEPARTMENT of new role.",
-      choices: deptHolder
-    }]).then((answers) => {
+      choices: function() {
+        var choicesArray = [];
+          for (i = 0; i < deptHolder.length; i++) {
+            choicesArray.push(deptHolder[i].dept_name)
+          }
+          return choicesArray;
+      }
+    },
+  ]).then((answers) => {
       for (i = 0; i < deptHolder.length; i++) {
         if (deptHolder[i].dept_name === answers.input_dept_id) {
           input_dept_id = deptHolder[i].id
@@ -187,7 +195,7 @@ addEmployee = () => {
   }, {
     name: "input_last_name",
     type: "input",
-    message: "Enter FIRST NAME of EMPLOYEE"
+    message: "Enter LAST NAME of EMPLOYEE"
   }, {
       name: "input_role_id",
       type: "list",
@@ -223,7 +231,7 @@ addEmployee = () => {
       }
     }
 
-    connection.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES ('${answers.input_first_name}', '${answers.input_last_name}', '${answers.input_role_id}', '${input_manager_id}')`, (err, res) => {
+    connection.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES ('${answers.input_first_name}', '${answers.input_last_name}', '${input_role_id}', '${input_manager_id}')`, (err, res) => {
       if (err) throw err;
 
       console.info("You ADDED one new EMPLOYEE: " + answers.input_first_name + " " + answers.input_last_name);
