@@ -54,12 +54,11 @@ uiStart = () => {
     });
 };
 
-//FETCH - needed for following functions
+//FETCH - needed for following functions --COMPLETED
 fetchRoles = () => {
   connection.query("SELECT id, title FROM emp_role", (err, res) => {
     if (err) throw err;
     roles = res;
-    console.log(roles);
   })
 };
 
@@ -84,7 +83,7 @@ fetchEmployees = () => {
   })
 };
 
-//CREATE --> add
+//CREATE -- COMPLETED
 //export file?
 addFunc = () => {
   inquirer
@@ -134,12 +133,10 @@ addDept = () => {
 };
 
 
-//////edit here
 addRole = () => {
   deptHolder = [];
   for (i = 0; i < departments.length; i++) {
     deptHolder.push(Object(departments[i]));
-    console.log(deptHolder);
   };
     inquirer.prompt([{
       name: "input_role",
@@ -242,7 +239,7 @@ addEmployee = () => {
 };
 
 //////////////////////////////////////////////////
-//READ --> 
+//READ -- COMPLETED, EXCEPT FOR BUDGET
 viewFunc = () => {
     inquirer
     .prompt([
@@ -250,7 +247,7 @@ viewFunc = () => {
         name: "view",
         type: "list",
         message: "What will you VIEW?",
-        choices: ["DEPARTMENT", "ROLE", "EMPLOYEE", "EXIT"],
+        choices: ["DEPARTMENT", "ROLE", "EMPLOYEE", "BUDGET", "EXIT"],
       },
     ])
     .then((answers) => {
@@ -260,14 +257,53 @@ viewFunc = () => {
         viewRole();
       } else if (answers.view === "EMPLOYEE") {
         viewEmployee();
-      } else if (answers.view === "EXIT") {
+      } else if (answers.view === "BUDGET") {
+          viewBudget();
+      } else if  (answers.view === "EXIT") {
         console.info("Thanks for using our software!");
         connection.end();
       } else {
         connection.end();
       }
     });
-}
+};
+
+viewDept = () => {
+  connection.query('SELECT * FROM department', (err, res) => {
+    if (err) throw err;
+    console.log("\n");
+    console.table(res);
+    console.log("\n");
+  });
+    uiStart();
+};
+
+viewRole = () => {
+  connection.query('SELECT r.id, r.title, r.salary, r.department_id as View_Dept_Name FROM emp_role AS r INNER JOIN department AS d ON r.department_id = d.id', (err, res) => {
+    if (err) throw err;
+    console.log("\n");
+    console.table(res);
+    console.log("\n");
+  });
+    uiStart();
+};
+
+viewEmployee = () => {
+  connection.query('SELECT e.id, e.first_name, e.last_name, d.dept_name AS department, r.title, r.salary, CONCAT_WS(" ", m.first_name, m.last_name) AS manager FROM employee e LEFT JOIN employee m ON m.id = e.manager_id INNER JOIN emp_role r ON e.role_id = r.id INNER JOIN department d ON r.department_id = d.id ORDER BY e.id ASC', (err, res) => {
+    if (err) throw err;
+    console.log("\n");
+    console.table(res);
+    console.log("\n");
+  });
+  uiStart();
+};
+
+viewBudget = () => {
+console.log("\n");
+console.warn("Sorry, this doesn't work yet.")
+console.log("\n");
+uiStart();
+};
 
 //UPDATE
 
