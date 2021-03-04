@@ -311,8 +311,133 @@ updateFunc = () => {
     name: "update",
     type: "list",
     message: "What will you UPDATE?",
-    choices: ["Update Employee Roles", ]
-  }])
+    choices: ["Update Employee Roles", "Update Employee Managers", "EXIT"]
+  }]).then(answers => {
+    if (answers.update === "Update Employee Roles") {
+      updateEmpRole();
+    } else if (answers.update === "Update Employee Managers") {
+      updateEmpManagers();
+    } else if (answers.update  === "EXIT") {
+      console.info("Thanks for using our software!");
+      connection.end();
+    } else {
+      connection.end();
+    }
+  })
+};
+
+updateEmpRole = () => {
+  let empHolder= [];
+  for (i = 0; i < employees.length; i++) {
+    empHolder.push(Object(employees[i]));
+  }
+  inquirer.prompt([{
+    name: "updateRole",
+    type: "list",
+    message: "SELECT EMPLOYEE to UPDATE.",
+    choices: function() {
+      var choicesArray = [];
+      for (var i = 0; i < empHolder.length; i++) {
+        choicesArray.push(empHolder[i].employee_name);
+      }
+      return choicesArray;
+    }
+  }]).then(answers => {
+    let empRoleHolder = [];
+    for (i = 0; i < roles.length; i++) {
+      empRoleHolder.push(Object(roles[i]));
+    };
+    for (i = 0; i < empHolder.length; i++) {
+      if (empHolder[i].employee_name === answers.updateRole) {
+        selEmp = empHolder[i].id
+      }
+    }
+    inquirer.prompt([{
+      name: "selectNewRole",
+      type: "list",
+      message: "SELECT a new ROLE.",
+      choices: function() {
+        var choicesArray = [];
+        for (i = 0; i < empRoleHolder.length; i++) {
+          choicesArray.push(empRoleHolder[i].title)
+        }
+        return choicesArray;
+      }
+    }
+  ]).then(answers => {
+    for (i = 0; i < empRoleHolder.length; i++) {
+      if (answers.selectNewRole === empRoleHolder[i].title) {
+        selRole = empRoleHolder[i].id
+        connection.query(`UPDATE employee SET role_id = ${selRole} WHERE id = ${selEmp}`), (err, res) => {
+          if (err) throw err;
+        };
+      }
+    }
+    console.log("\n");
+    console.info("Employee Role has been updated!");
+    console.log("\n");
+    fetchEmployees();
+    fetchRoles();
+    uiStart();
+  })})
+};
+
+updateEmpManagers = () => {
+  let empHolder= [];
+  for (i = 0; i < employees.length; i++) {
+    empHolder.push(Object(employees[i]));
+  }
+  inquirer.prompt([{
+    name: "updateManager",
+    type: "list",
+    message: "SELECT EMPLOYEE to UPDATE.",
+    choices: function() {
+      var choicesArray = [];
+      for (var i = 0; i < empHolder.length; i++) {
+        choicesArray.push(empHolder[i].employee_name);
+      }
+      return choicesArray;
+    }
+  }]).then(answers => {
+    fetchEmployees();
+    fetchManagers();
+    let empManagerHolder = [];
+    for (i = 0; i < managers.length; i++) {
+      empManagerHolder.push(Object(managers[i]));
+    };
+    for (i = 0; i < empHolder.length; i++) {
+      if (empHolder[i].employee_name === answers.updateManager) {
+        selEmp = empHolder[i].id
+      }
+    }
+    inquirer.prompt([{
+      name: "selectNewManager",
+      type: "list",
+      message: "\n SELECT a new MANAGER \n",
+      choices: function() {
+        var choicesArray = [];
+        for (i = 0; i < empManagerHolder.length; i++) {
+          choicesArray.push(empManagerHolder[i].managers)
+        }
+        return choicesArray;
+      }
+    }]).then(answers => {
+      for (i = 0; i < empManagerHolder.length; i++) {
+        if (answers.selectNewManager === empManagerHolder[i].managers) {
+          selManager = empManagerHolder[i].id
+          connection.query(`UPDATE employee SET manager_id = ${selManager} WHERE id = ${selEmp}`), (err, res) => {
+            if (err) throw err;
+          };
+          console.log("\n");
+          console.info("Employee Manager has been updated!");
+          console.log("\n");
+        }
+      }
+      fetchEmployees();
+      fetchManagers();
+      uiStart();
+    })
+  })
 };
 
 //DELETE
