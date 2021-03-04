@@ -306,5 +306,13 @@ uiStart();
 };
 
 //UPDATE
+updateFunc = () => {
+  inquirer.prompt([{
+    name: "update",
+    type: "list",
+    message: "What will you UPDATE?",
+    choices: ["Update Employee Roles", ]
+  }])
+};
 
 //DELETE
