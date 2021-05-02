@@ -1,5 +1,5 @@
-# Simple-Reademe-Gen
-  https://github.com/Glatorian13/Simple-Reademe-Gen
+# SQL-Employee-Tracker
+ https://github.com/Glatorian13/SQL-Employee-Tracker
   # Description
   This is a employee tracker build with nodejs, inquierer and mySql. It functions through a CLI.
   # Table of Content
